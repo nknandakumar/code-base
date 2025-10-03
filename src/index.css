@@ -1,0 +1,30 @@
+body {
+  background-color:  #202124;
+}
+
+img{
+  width: 100%;
+  height: 100vh;
+
+  margin: 0;
+  padding: 0;
+
+}
+
+.true{
+  height: 6px;
+  width:2px;
+  background-color: rgb(255, 255, 255);
+  position: absolute;
+  right:10px;
+
+
+}
+.false{
+  height: 1px;
+  width:2px;
+  background-color: rgb(255, 4, 4);
+  position: absolute;
+
+
+}
