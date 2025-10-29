@@ -1,29 +1,25 @@
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import img from "./assets/img.png"
-// Programs stored as key-value
-const programs = {
-  1: "console.log('Hello World!');",
-  2: `#include <stdio.h>\nint main() {\n   printf("Hi");\n   return 0;\n}`,
-  3: "print('Hello from Python!')",
-};
+import programs from "./programs"
+
 
 export default function ProgramPage() {
   const { id } = useParams();
+  const program = programs.find((p) => String(p.id) === String(id));
 
   useEffect(() => {
-    const code = programs[id];
-    if (code) {
+    if (program && program.code) {
       navigator.clipboard
-        .writeText(code)
+        .writeText(program.code)
         .then(() => console.log("Copied to clipboard ✅"))
         .catch((err) => console.error("Failed to copy ❌", err));
     }
-  }, [id]);
+  }, [id, program]);
 
   return (
     <div >
-        {programs[id] ? (
+        {(program) ? (
         <>
           <h1 className="true"></h1>
         </>
