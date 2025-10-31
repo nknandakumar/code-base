@@ -378,8 +378,6 @@ result = switch(x,
 
 x = readline(prompt = "Enter graph type (plot/histogram/line/pie/scatter/boxplot): ")
 
-
-
       `
     },
     {
