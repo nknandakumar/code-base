@@ -302,7 +302,7 @@ print(cumprod(s))
 
       `},
 
-      {id: 6,
+      {id: 7,
       name: "",
       code: `
       library(pracma)
@@ -343,7 +343,7 @@ print(inv(A))
 
       `},
     {
-      id: 7,
+      id: 8,
       name: "",
       code: `
       
@@ -383,7 +383,7 @@ x = readline(prompt = "Enter graph type (plot/histogram/line/pie/scatter/boxplot
       `
     },
     {
-      id: 8,
+      id: 9,
       name: "",
       code: `
       installed.packages()
