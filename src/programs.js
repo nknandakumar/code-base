@@ -346,7 +346,8 @@ print(inv(A))
       id: 7,
       name: "",
       code: `
-      data("mtcars") # including data set
+      
+data("mtcars") # including data set
 
 
 
@@ -376,6 +377,8 @@ result = switch(x,
 )
 
 x = readline(prompt = "Enter graph type (plot/histogram/line/pie/scatter/boxplot): ")
+
+
 
       `
     },
