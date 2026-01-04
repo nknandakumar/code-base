@@ -247,34 +247,47 @@ v2 = c(2,3)
       id: 4,
       name: "",
       code: `
-      x <- c(10, 3, 5, 1, 9, 6)
-x
+ from collections import deque
 
-quickSort <- function(arr) {
-  mid <- sample(arr, 1)
-  left <- c()
-  right <- c()
-  
-  lapply(arr[arr != mid], function(d) {
-    if (d < mid) {
-      left <<- c(left, d)
-    } else {
-      right <<- c(right, d)
+def dfs(graph,start,visited=None,visited_order=None):
+    if visited is None:
+        visited = set()
+        visited_order = []
+    visited.add(start)
+    visited_order.append(start)
+    for neigbours in graph[start]:
+        if neigbours not in visited:
+            dfs(graph, neigbours,visited,visited_order)
+    return visited_order
+
+def bfs(graph,start):
+    visited = set()
+    queue = deque([start])
+    visited_order = []
+    while queue:
+        vertex = queue.popleft()
+        if vertex not in visited:
+            visited.add(vertex)
+            visited_order.append(vertex)
+            queue.extend([neigbours for neigbours in graph[vertex] if neigbours not in visited ])
+    return visited_order
+            
+graph = {
+    'A':['B','C'],
+    'B':['D','E'],
+    'C':['F'],
+    'D':[],
+    'E':['F'],
+    'F':[]
     }
-  })
-  
-  if (length(left) > 1) {
-    left <- quickSort(left)
-  }
-  if (length(right) > 1) {
-    right <- quickSort(right)
-  }
-  
-  c(left, mid, right)
-}
 
-RES <- quickSort(x)
-RES
+dfs_result = dfs(graph, 'A')
+bfs_result = bfs(graph,'A')
+
+print(dfs_result)
+print(bfs_result)
+
+
 
       `
       },
