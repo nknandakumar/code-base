@@ -261,67 +261,34 @@ x = readline(prompt = "Enter graph type (plot/histogram/line/pie/scatter/boxplot
       id: 9,
       name: "",
       code: `
-      installed.packages()
+import numpy as np
+import matplotlib as mpl
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
 
-install.packages("dplyr")
+def generate_dataset(n):
+    x = []
+    y = []
+    random_x1 = np.random.rand()
+    random_x2 = np.random.rand()
+    for i in range(n):
+        x1 = i
+        x2 = i / 2 + np.random.rand() * n
+        x.append([1, x1, x2])
+        y.append(random_x1 * x1 + random_x2 * x2 + 1)
+    return np.array(x), np.array(y)
 
-library(dplyr)
+# Generate dataset
+x, y = generate_dataset(200)
 
-# create a data frame
-
-cricket <- data.frame(pname=c('S', 'V', 'D', 'R','A'),
-                      
-                      runs=c(5000, 5200, 4408, 3000,NA),
-                      
-                      wickets=c(17, 10, NA, 55,100),
-                      
-                      highestruns=c("yes","yes","yes","NA","NA"))
-
-print("cricket Dataframe")
-
-cricket
-
-# fetch data in certain column
-
-cricket["runs"]
-
-cricket[2:3,c(1,2)]
-
-cat("players - ")
-
-cricket[1:3,1]
-
-batsmens<-cricket[cricket$runs>100,]
-
-batsmens
-
-batsmens<-cricket[cricket$runs<300,]
-
-batsmens
-
-subset(x=cricket, subset=wickets>=15, select=c(pname,wickets))
-
-cricket %>% filter(is.na(wickets))
-
-cricket
-
-cricket.pname<-arrange(cricket,wickets)
-
-print(cricket.pname)
-
-select(cricket,starts_with("run")) # column starts with run
-
-select(cricket,-starts_with("run")) # column does not starts with run
-
-select(cricket, 1:3)
-
-select(cricket,contains("un")) # column includes the character "un"
-
-cricket[3,2]<- 8000 # assigning new value to 3rd row , 2nd column
-
-str(cricket) # structure of the data frame
-
-      `
+# Plotting
+mpl.rcParams['legend.fontsize'] = 12
+fig = plt.figure()
+ax = fig.add_subplot(projection='3d')
+ax.scatter(x[:, 1], x[:, 2], y, label='y', s=5)
+ax.legend()
+ax.view_init(45, 0)
+plt.show() `
     }
 
 ];
