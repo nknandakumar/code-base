@@ -1,0 +1,40 @@
+# Allow all standard web crawlers
+User-agent: *
+Allow: /
+
+# ChatGPT / OpenAI crawler
+User-agent: GPTBot
+Allow: /
+
+# ChatGPT browsing plugin
+User-agent: ChatGPT-User
+Allow: /
+
+# Microsoft Copilot / Bing crawler
+User-agent: Bingbot
+Allow: /
+
+# Microsoft Copilot AI
+User-agent: CopilotBot
+Allow: /
+
+# Google Gemini / Bard crawler
+User-agent: Google-Extended
+Allow: /
+
+# Anthropic Claude crawler
+User-agent: anthropic-ai
+Allow: /
+
+# Common AI data crawlers
+User-agent: CCBot
+Allow: /
+
+User-agent: Omgilibot
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+# Allow llms.txt to be discovered
+Sitemap: /llms.txt
