@@ -3,69 +3,113 @@ const programs = [
         id: 1,
         name: "",
         code: `
- def selection_sort(arr):
-    for i in range(len(arr)):
-        mid_idx = min(range(i,len(arr)), key=arr.__getitem__)
-        arr[i],arr[mid_idx]= arr[mid_idx],arr[i]
-        
-arr = [-8,5,4,3,2,-1]
-selection_sort(arr)
-print("After Sorting : ",arr)
+import random
 
+distance_matrix = [
+    [0, 10, 15, 20],
+    [10, 0, 35, 25],
+    [15, 35, 0, 30],
+    [20, 25, 30, 0]
+]
 
+def total_distance(path):
+    total = 0
+    for i in range(len(path) - 1):
+        total += distance_matrix[path[i]][path[i + 1]]
+    total += distance_matrix[path[-1]][path[0]]  # return to start
+    return total
 
+def hill_climbing_tsp(num_cities, max_iteration=10000):
+    current_path = list(range(num_cities))
+    current_distance = total_distance(current_path)
+    for _ in range(max_iteration):
+        neighbor_path = current_path.copy()
+        i, j = random.sample(range(num_cities), 2)
+        neighbor_path[i], neighbor_path[j] = neighbor_path[j], neighbor_path[i]
+        neighbor_distance = total_distance(neighbor_path)
 
+        if neighbor_distance < current_distance:
+            current_path = neighbor_path
+            current_distance = neighbor_distance
+    return current_path
+
+def main():
+    num_cities = 4
+    solution = hill_climbing_tsp(num_cities)
+    print("Optimal Solution:", solution)
+    print("Total Distance:", total_distance(solution))
+
+if __name__ == "__main__":
+    main()
         `
     },
     {
       id: 2,
       name: "",
       code: `
-     from itertools import permutations
+from collections import defaultdict
 
-def tsp(graph, start):
+class graph:
+    def __init__(self, vertices):
+        self.V = vertices
+        self.graph = defaultdict(list)
 
-    return min(
-        sum(graph[route[i]][route[i+1]]
-        for i in range(len(route)-1)) + graph[route[-1]][route[0]]
-        for route in permutations(range(len(graph)))
-        if route[0] == start
-    )
-  
+    def addEdge(self, u, v):
+        self.graph[u].append(v)
 
-graph = [
-    [0,10,35,20],
-    [10,0,35,25],
-    [15,25,0,30],
-    [20,25,30,0]
-]
+    def DLS(self, src, target, maxDepth):
+        if src == target: return True
+        if maxDepth <= 0: return False
 
-print("Minimum Cost is =", tsp(graph, 0))
-      
+        for i in self.graph[src]:
+            if(self.DLS(i, target, maxDepth - 1)):
+                return True
+        return False
+
+    def IDDFS(self, src, target, maxDepth):
+        for i in range(maxDepth):
+            if(self.DLS(src, target, i)):
+                return True
+        return False
+
+g = graph(7)
+g.addEdge(0, 1)
+g.addEdge(0, 2)
+g.addEdge(1, 3)
+g.addEdge(1, 4)
+g.addEdge(2, 5)
+g.addEdge(2, 6)
+
+target = 6; maxDepth = 3; src = 0
+
+if g.IDDFS(src, maxDepth, target) == True:
+    print("Target is reachable from source within max depth")
+else:
+    print("Target is not reachable from source within max depth")
       `
     },
     {
       id: 3,
       name: "",
       code: `
-    def knapsack(values,weight,capacity):
-    ratio = sorted(zip(values,weight),key=lambda x:x[0]/x[1],reverse=True)
-    total_value =0 
-    
-    for v,w in ratio:
-        if capacity >=w:
-            total_value+=v
-            capacity -= w
-        else:
-            total_value += v*(capacity/w)
-            break
-    return total_value
+def depthLimit_search(array, depthLimit):
+    def dls_helper(arr, currentDepth):
+        if currentDepth > depthLimit:
+            return
 
-values = [60,100,120]
-weights = [10,20,30]
-capacity = 50
+        for element in arr:
+            if isinstance(element, list):
+                print(f"At depth {currentDepth}: encountered nested list, diving deeper...")
+                dls_helper(element, currentDepth + 1)
+            else:
+                print(f"At depth {currentDepth}: processing element {element}")
 
-print(knapsack(values, weights, capacity))
+    dls_helper(array, 0)
+
+nestedArray = [1, [2, 3], [4, [5, 6]], 7, [8, [9, [10, 11]]]]
+depthLimit = 2
+
+depthLimit_search(nestedArray, depthLimit)
       `
     },
 
@@ -73,47 +117,34 @@ print(knapsack(values, weights, capacity))
       id: 4,
       name: "",
       code: `
- from collections import deque
+      x <- c(10, 3, 5, 1, 9, 6)
+x
 
-def dfs(graph,start,visited=None,visited_order=None):
-    if visited is None:
-        visited = set()
-        visited_order = []
-    visited.add(start)
-    visited_order.append(start)
-    for neigbours in graph[start]:
-        if neigbours not in visited:
-            dfs(graph, neigbours,visited,visited_order)
-    return visited_order
-
-def bfs(graph,start):
-    visited = set()
-    queue = deque([start])
-    visited_order = []
-    while queue:
-        vertex = queue.popleft()
-        if vertex not in visited:
-            visited.add(vertex)
-            visited_order.append(vertex)
-            queue.extend([neigbours for neigbours in graph[vertex] if neigbours not in visited ])
-    return visited_order
-            
-graph = {
-    'A':['B','C'],
-    'B':['D','E'],
-    'C':['F'],
-    'D':[],
-    'E':['F'],
-    'F':[]
+quickSort <- function(arr) {
+  mid <- sample(arr, 1)
+  left <- c()
+  right <- c()
+  
+  lapply(arr[arr != mid], function(d) {
+    if (d < mid) {
+      left <<- c(left, d)
+    } else {
+      right <<- c(right, d)
     }
+  })
+  
+  if (length(left) > 1) {
+    left <- quickSort(left)
+  }
+  if (length(right) > 1) {
+    right <- quickSort(right)
+  }
+  
+  c(left, mid, right)
+}
 
-dfs_result = dfs(graph, 'A')
-bfs_result = bfs(graph,'A')
-
-print(dfs_result)
-print(bfs_result)
-
-
+RES <- quickSort(x)
+RES
 
       `
       },
@@ -121,80 +152,108 @@ print(bfs_result)
       {id: 5,
       name: "",
       code: `
-     
-def minmax(arr,low,high):
-    if low == high:
-        return arr[low],arr[high]
-    elif high == low +1:
-        return(min(arr[low],arr[high]),max(arr[low],arr[high]))
-    mid = (low+high)//2
-    min1,max1 = minmax(arr, low, mid)
-    min2,max2 = minmax(arr, mid+1, high) 
-    return min(min1,min2),max(max1,max2)
+def chatbot_response(user_input):
+    # Convert the input to lowercase to make the bot case-insensitive
+    user_input = user_input.lower()
 
-arr = [22,44,66,99,44,55,19]
-min, max = minmax(arr, 0, len(arr)-1)
+    # Simple keyword-based responses
+    if "hello" in user_input or "hi" in user_input:
+        return "Hello! How can I help you today?"
+    elif "how are you" in user_input:
+        return "I'm just a bot, but I'm here to help you! How can I assist you?"
+    elif "name" in user_input:
+        return "I am a chatbot created by OpenAI. What's your name?"
+    elif "bye" in user_input or "goodbye" in user_input:
+        return "Goodbye! Have a great day!"
+    else:
+        return "I'm sorry, I don't understand that. Can you rephrase?"
 
-print("Minimum = ",min)
-print("Maximum = ",max)
-
+# Main loop to interact with the chatbot
+print("Welcome to the simple chatbot. Type 'bye' to exit.")
+while True:
+    user_input = input("You: ")
+    if user_input.lower() == "bye":
+        print("Chatbot: Goodbye! Have a great day!")
+        break
+    response = chatbot_response(user_input)
+    print("Chatbot:", response)
       `},
-    {id: 6,
-      name: "",
-      code: `
-     
-def quickSort(arr):
-    if len(arr) <= 1:
-        return arr
-    pivot = arr[len(arr)//2]
-    return quickSort([x for x in arr if x < pivot]) + [x for x in arr if x == pivot] + quickSort([x for x in arr if x > pivot])
 
-arr = [55,7,2,4,-2,3,2,11]
-print("After Sorting : ")
-print(quickSort(arr))
-      `},
       {id: 7,
       name: "",
       code: `
-     def merge_sort(arr):
-    if len(arr) <= 1:
-        return arr
-    mid = len(arr)//2
-    left,right = merge_sort(arr[:mid]),merge_sort(arr[mid:])
-    return sorted(left+right)
+      library(pracma)
+library(psych)
 
-arr = [5,4,3,2,1]
-print("After Sorting : ")
-print(merge_sort(arr))
+# Create a 3x3 matrix
+A <- matrix(
+  c(6, 1, 1,
+    4, -2, 5,
+    2, 8, 7),
+  nrow = 3,
+  ncol = 3,
+  byrow = TRUE
+)
+
+cat("The 3x3 matrix:\n")
+print(A)
+
+# Rank of matrix
+cat("Rank of A:\n")
+print(Rank(A))
+
+# Trace of matrix A
+cat("Trace of A:\n")
+print(tr(A))
+
+# Determinant of matrix A
+cat("Determinant of A:\n")
+print(det(A))
+
+# Transpose of matrix A
+cat("Transpose of A:\n")
+print(t(A))
+
+# Inverse of matrix A
+cat("Inverse of A:\n")
+print(inv(A))
+
       `},
     {
       id: 8,
       name: "",
       code: `
       
- def an(graph):
-    vertices = sorted(graph)
-    n = len(graph)
-    adjmatrix = [[0]*n for _ in range(n)]
-    in_degree,out_fegree = {v:0 for v in vertices}, {v:0 for v in vertices}
-    for i ,v in enumerate(vertices):
-        out_fegree[v] = len(graph[v])
-        for u in graph[v]:
-            adjmatrix[i][vertices.index(u)]=1
-            in_degree[v]+= 1
-    print("In Degree = ",in_degree)
-    print("Out Degree = ",out_fegree)
-    for i in adjmatrix:
-        print(i)
-        
-graph = {
-    'A':['B','C'],
-    'B':['D'],
-    'C':['D'],
-    'D':[]
-    }
+data("mtcars") # including data set
 
-an(graph)
+
+
+result = switch(x,
+                
+                "plot" = cat("Plot", plot(1, 3)),
+                
+                "histogram" = cat("Hist", hist(c(19, 23, 11, 5, 16, 21, 32, 14, 19,
+                                                 27, 39, 120, 40, 70, 90), xlab = "No.of Articles ",
+                                               col = "red", border = "black")),
+                
+                "line" = cat("Line", plot(c(1, 2, 3, 4, 5, 10), type = "l", col = "blue",
+                                          main = "Line Chart", xlab = "X-axis", ylab = "Y-axis")),
+                
+                "pie" = cat("Pie", pie(c(10, 20, 30, 40),
+                                       labels = c("Apples", "Bananas", "Cherries", "Dates"), main = "Fruits",
+                                       col = c("blue", "yellow", "green", "orange"))),
+                
+                "scatter" = cat("Scatter", plot(mtcars$wt, mtcars$mpg,
+                                                xlab = "Weight", ylab = "Mileage",
+                                                xlim = c(1.5, 4), ylim = c(10, 25),
+                                                main = "Weight vs Mileage")),
+                
+                "boxplot" = cat("Boxplot", boxplot(disp ~ gear, data = mtcars,
+                                                   main = "Displacement by Gear",
+                                                   xlab = "Gear", ylab = "Displacement"))
+)
+
+x = readline(prompt = "Enter graph type (plot/histogram/line/pie/scatter/boxplot): ")
 
       `
     },
@@ -202,64 +261,66 @@ an(graph)
       id: 9,
       name: "",
       code: `
-     def optimal_bst(keys, freq):
-    n = len(keys)
-    cost = [[0] * n for _ in range(n)]
+      installed.packages()
 
-    # Base case: single keys
-    for i in range(n):
-        cost[i][i] = freq[i]
+install.packages("dplyr")
 
-    # Chains of length 2 to n
-    for length in range(2, n + 1):
-        for i in range(n - length + 1):
-            j = i + length - 1
-            cost[i][j] = float('inf')
+library(dplyr)
 
-            # Try making each key in interval [i..j] the root
-            for r in range(i, j + 1):
-                c = (
-                    (cost[i][r - 1] if r > i else 0)
-                    + (cost[r + 1][j] if r < j else 0)
-                    + sum(freq[i:j + 1])
-                )
-                if c < cost[i][j]:
-                    cost[i][j] = c
+# create a data frame
 
-    return cost[0][n - 1]
+cricket <- data.frame(pname=c('S', 'V', 'D', 'R','A'),
+                      
+                      runs=c(5000, 5200, 4408, 3000,NA),
+                      
+                      wickets=c(17, 10, NA, 55,100),
+                      
+                      highestruns=c("yes","yes","yes","NA","NA"))
 
+print("cricket Dataframe")
 
-keys = [10, 20, 30, 40]
-freq = [4, 2, 6, 3]
-print("Optimal cost:", optimal_bst(keys, freq))
-      `
-    },
-    {
-      id: 12,
-      name: "",
-      code: `
-     def job_sequencing(jobs):
-    jobs.sort(key=lambda x: x[2], reverse=True)
+cricket
 
-    max_deadline = max(job[1] for job in jobs)
-    slots = [-1] * max_deadline
-    profit = 0
+# fetch data in certain column
 
-    for job in jobs:
-        for i in range(job[1] - 1, -1, -1):
-            if slots[i] == -1:
-                slots[i] = job[0]
-                profit += job[2]
-                break
+cricket["runs"]
 
-    return slots, profit
+cricket[2:3,c(1,2)]
 
+cat("players - ")
 
-jobs = [('J1', 2, 100), ('J2', 1, 19), ('J3', 2, 27), ('J4', 1, 25), ('J5', 3, 15)]
-result, max_profit = job_sequencing(jobs)
+cricket[1:3,1]
 
-print("Selected jobs:", result)
-print("Max Profit:", max_profit)
+batsmens<-cricket[cricket$runs>100,]
+
+batsmens
+
+batsmens<-cricket[cricket$runs<300,]
+
+batsmens
+
+subset(x=cricket, subset=wickets>=15, select=c(pname,wickets))
+
+cricket %>% filter(is.na(wickets))
+
+cricket
+
+cricket.pname<-arrange(cricket,wickets)
+
+print(cricket.pname)
+
+select(cricket,starts_with("run")) # column starts with run
+
+select(cricket,-starts_with("run")) # column does not starts with run
+
+select(cricket, 1:3)
+
+select(cricket,contains("un")) # column includes the character "un"
+
+cricket[3,2]<- 8000 # assigning new value to 3rd row , 2nd column
+
+str(cricket) # structure of the data frame
+
       `
     }
 
