@@ -117,34 +117,28 @@ depthLimit_search(nestedArray, depthLimit)
       id: 4,
       name: "",
       code: `
-      x <- c(10, 3, 5, 1, 9, 6)
-x
+     def find_S_algorithm(examples):
+    hypothesis = None 
+    for features, label in examples:
+        if label == 1:
+            if hypothesis is None:
+                hypothesis = features.copy()
+            else:
+                for i in range(len(hypothesis)):
+                    if hypothesis[i] != features[i]:
+                        hypothesis[i] = '?'
+    return hypothesis   # <-- also moved return outside the loop
 
-quickSort <- function(arr) {
-  mid <- sample(arr, 1)
-  left <- c()
-  right <- c()
-  
-  lapply(arr[arr != mid], function(d) {
-    if (d < mid) {
-      left <<- c(left, d)
-    } else {
-      right <<- c(right, d)
-    }
-  })
-  
-  if (length(left) > 1) {
-    left <- quickSort(left)
-  }
-  if (length(right) > 1) {
-    right <- quickSort(right)
-  }
-  
-  c(left, mid, right)
-}
+example = [
+    (["sunny", "warm", "normal", "strong", "warm", "same"], 1),
+    (["sunny", "warm", "high", "strong", "warm", "same"], 1),
+    (["rainy", "cold", "high", "strong", "warm", "change"], 0), 
+    (["sunny", "warm", "high", "strong", "cool", "change"], 1)
+]
 
-RES <- quickSort(x)
-RES
+hypotheses = find_S_algorithm(example)
+print("most specific hypothesis:", hypotheses)
+
 
       `
       },
@@ -152,10 +146,77 @@ RES
       {id: 5,
       name: "",
       code: `
+class Rule:
+    def __init__(self, premises, conclusion):
+        self.premises = premises
+        self.conclusion = conclusion
+
+rules = [
+        Rule(["A"],"B"),        
+        Rule(["B","C"],"D"),
+        Rule(["D"],"E"),
+        Rule(["F"],"C"),
+    ]
+def forword_chaining(kb,query):
+    inferred = set()
+    agenda = [query]
+    while agenda:
+        fact = agenda.pop(0)
+        if fact not in inferred:
+            inferred.add(fact)
+            matching_rules = [rule for rule in kb if all(premise in inferred for premise in rule.premises)]
+            for rule in matching_rules:
+                agenda.append(rule.conclusion)
+    return inferred
+
+print("Forword Chaining")
+print("inferred facts:", forword_chaining(rules, "A"))
+
+      `},
+
+      {id: 6,
+      name: "",
+      code: `
+      class Rule:
+    def __init__(self, premises, conclusion):
+        self.premises = premises
+        self.conclusion = conclusion
+
+rules = [
+    Rule(["A"], "B"),
+    Rule(["B", "C"], "D"),
+    Rule(["D"], "E"),
+    Rule(["F"], "C"),
+]
+
+def backward_chaining(kb, query):
+    inferred = set()
+
+    def ask(fact):
+        if fact in inferred:
+            return True
+        matching_rules = [rule for rule in kb if rule.conclusion == fact]
+        for rule in matching_rules:
+            if all(ask(premise) for premise in rule.premises):
+                inferred.add(fact)
+                return True
+        return False   # <-- must be inside ask, not outside
+
+    return ask(query)
+
+print("Backward Chaining")
+print("can prove E:", backward_chaining(rules, "A"))
+
+
+      `},
+      {
+        id: 7,
+        name: "",
+        code: `
 def chatbot_response(user_input):
     # Convert the input to lowercase to make the bot case-insensitive
     user_input = user_input.lower()
-
+    
     # Simple keyword-based responses
     if "hello" in user_input or "hi" in user_input:
         return "Hello! How can I help you today?"
@@ -177,88 +238,12 @@ while True:
         break
     response = chatbot_response(user_input)
     print("Chatbot:", response)
-      `},
+    
+    
 
-      {id: 7,
-      name: "",
-      code: `
-      library(pracma)
-library(psych)
-
-# Create a 3x3 matrix
-A <- matrix(
-  c(6, 1, 1,
-    4, -2, 5,
-    2, 8, 7),
-  nrow = 3,
-  ncol = 3,
-  byrow = TRUE
-)
-
-cat("The 3x3 matrix:\n")
-print(A)
-
-# Rank of matrix
-cat("Rank of A:\n")
-print(Rank(A))
-
-# Trace of matrix A
-cat("Trace of A:\n")
-print(tr(A))
-
-# Determinant of matrix A
-cat("Determinant of A:\n")
-print(det(A))
-
-# Transpose of matrix A
-cat("Transpose of A:\n")
-print(t(A))
-
-# Inverse of matrix A
-cat("Inverse of A:\n")
-print(inv(A))
-
-      `},
+     ` },
     {
-      id: 8,
-      name: "",
-      code: `
-      
-data("mtcars") # including data set
-
-
-
-result = switch(x,
-                
-                "plot" = cat("Plot", plot(1, 3)),
-                
-                "histogram" = cat("Hist", hist(c(19, 23, 11, 5, 16, 21, 32, 14, 19,
-                                                 27, 39, 120, 40, 70, 90), xlab = "No.of Articles ",
-                                               col = "red", border = "black")),
-                
-                "line" = cat("Line", plot(c(1, 2, 3, 4, 5, 10), type = "l", col = "blue",
-                                          main = "Line Chart", xlab = "X-axis", ylab = "Y-axis")),
-                
-                "pie" = cat("Pie", pie(c(10, 20, 30, 40),
-                                       labels = c("Apples", "Bananas", "Cherries", "Dates"), main = "Fruits",
-                                       col = c("blue", "yellow", "green", "orange"))),
-                
-                "scatter" = cat("Scatter", plot(mtcars$wt, mtcars$mpg,
-                                                xlab = "Weight", ylab = "Mileage",
-                                                xlim = c(1.5, 4), ylim = c(10, 25),
-                                                main = "Weight vs Mileage")),
-                
-                "boxplot" = cat("Boxplot", boxplot(disp ~ gear, data = mtcars,
-                                                   main = "Displacement by Gear",
-                                                   xlab = "Gear", ylab = "Displacement"))
-)
-
-x = readline(prompt = "Enter graph type (plot/histogram/line/pie/scatter/boxplot): ")
-
-      `
-    },
-    {
-      id: 9,
+      id: 10,
       name: "",
       code: `
 import numpy as np
@@ -288,7 +273,8 @@ ax = fig.add_subplot(projection='3d')
 ax.scatter(x[:, 1], x[:, 2], y, label='y', s=5)
 ax.legend()
 ax.view_init(45, 0)
-plt.show() `
+plt.show()
+ `
     }
 
 ];
